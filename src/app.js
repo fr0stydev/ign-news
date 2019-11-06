@@ -3,6 +3,7 @@ const axios = require('axios');
 const client = new Discord.Client();
 require('dotenv').config();
 
+console.log(process.env.BOT_TOKEN)
 const time  = Math.floor(new Date() / 1000) - 259200
 
 client.on('message', msg => {
