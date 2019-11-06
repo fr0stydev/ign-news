@@ -3,7 +3,7 @@ const axios = require('axios');
 const client = new Discord.Client();
 require('dotenv').config();
 
-console.log(process.env.BOT_TOKEN)
+
 const time  = Math.floor(new Date() / 1000) - 259200
 
 client.on('message', msg => {
@@ -28,10 +28,22 @@ client.on('message', msg => {
             for (var i = 0; i < 4; i++){
                 summaries += '\nArticle ' + i + ' Title: ' + info[i].title + '\n'
                 summaries += 'Summary: ' + info[i].summary + '\n ------------------------------ \n'
+                axios.get('https://api-v3.igdb.com/pulse_urls',
+                {
+                    data: 'fields *; where id = ' + info[i].website + ";'",
+                    headers: {
+                        'user-key': process.env.API_KEY,
+                         Accept: 'application/json'
+                    }
+                }).then(result => {
+                    console.log(result.data[0].url)
+                    summaries += 'URL for these articles: ' +  result.data[0].url + '\n'
+                    msg.reply(summaries)
+                    summaries = ""
+                })
                 
             }
-            console.log(summaries)
-            msg.reply(summaries)
+
         }
         
     })
