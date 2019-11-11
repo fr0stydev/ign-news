@@ -115,6 +115,27 @@ client.on('message', msg => {
     }
 })
 
+client.on('message', msg => {
+    const args = msg.content.slice(process.env.prefix.length).trim().split(/ +/g);
+    const command = args.shift().toLowerCase();
+    if (command === 'rating'){
+        const content = msg.content.match(/"(.*?)"/);
+        let game = content[1];
+        axios.get('https://api-v3.igdb.com/games',
+        {
+            data: `search "${game}"; fields aggregated_rating;`,
+            headers: {
+                'user-key': process.env.API_KEY,
+                Acceptt: 'application/json'
+            }
+        }).then(result => {
+            let data = result.data[0]
+            msg.reply(`${game}'s rating is: ${data.aggregated_rating}`);
+        })
+        .catch(msg.reply(`No games found, make you enter the official name`));
+    }
+})
+
 //Other functions besides Game stuff
 //Roll the dice
 client.on('message', msg => {
@@ -124,5 +145,6 @@ client.on('message', msg => {
         msg.reply('\n You rolled a ' + '**' + roll + '**');
     }
 })
+
 
 client.login(process.env.BOT_TOKEN)
